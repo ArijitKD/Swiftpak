@@ -139,10 +139,10 @@ browse_button = ttk.Button(root_window, text="Browse...", style="my.TButton", co
 browse_button.place(x=343, y=36)
 
 run_button = ttk.Button(root_window, text="Run script", style="my.TButton", command=run)
-run_button.pack(side="bottom", pady=130)
+
 
 applabel = ttk.Label(root_window, text="This app was created by Arijit Kumar Das (Github: @ArijitKD).\n By using this app, you agree to the terms of the MIT License.", font=appfont, background=WINDOW_BG_COLOR)
-applabel.place(x=20, y=220)
+
 
 erc_options = {"Cut":cutoption, "Copy":copyoption, "Paste":pasteoption, "Select All":selectalloption}
 erc = tk.Menu(file_entry, tearoff=0, font=font.Font(family='Arial', size=9))
@@ -151,6 +151,9 @@ for option in erc_options.keys():
         erc.add_separator()
     erc.add_command(label=option, command=erc_options[option])
 
+
+applabel.pack(side='bottom', pady=30)
+run_button.pack(side="bottom", pady=50)
 root_window.bind("<Button-1>", entry_right_click_menu_focusout)
 root_window.bind("<Control-a>", selectalloption)
 #root_window.bind("<Control-c>", copyoption)
