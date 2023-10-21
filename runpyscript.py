@@ -18,16 +18,23 @@ def run(event=None):
 
 def cutoption(event=None):
     try:
+        root_window.clipboard_clear()
         selected = file_entry.selection_get()
+        selected_from_end = False
+        if (file_entry_value.get().endswith(selected)):
+            selected_from_end = True
+        print ("Selected", selected)
         root_window.clipboard_append(selected)
         file_entry_value.set(file_entry_value.get().replace(selected, ''))
-        file_entry.icursor(file_entry.index('insert')-len(selected))
+        if (not selected_from_end):
+            file_entry.icursor(file_entry.index('insert')-len(selected))
         file_entry.selection_range(0,0)
     except:
         return
 
 def copyoption(event=None):
     try:
+        root_window.clipboard_clear()
         selected = file_entry.selection_get()
         root_window.clipboard_append(selected)
         file_entry.selection_range(0,0)
@@ -41,10 +48,12 @@ def pasteoption(event=None):
         file_entry_value.set(file_entry_value.get().replace(selected, ''))
         file_entry.icursor(file_entry.index('insert')-len(selected))
     except:
-        selection = ''
+        selected = ''
     clipboard_data = root_window.clipboard_get()
     cursor_position = file_entry.index('insert')
     print (clipboard_data)
+    root_window.clipboard_clear()
+    print ("Clipboard cleared")
     #file_entry_value.set(file_entry_value.get().replace(selection, clipboard_data))
     file_entry.insert(cursor_position, clipboard_data)
     file_entry.selection_range(cursor_position, cursor_position+len(clipboard_data))
@@ -125,7 +134,7 @@ root_window.protocol("WM_DELETE_WINDOW", close_root_window)
 choose_file_label = ttk.Label(root_window, text = 'Choose file:', font=appfont, background=WINDOW_BG_COLOR)
 choose_file_label.place(x=20, y=20)
 
-file_entry = ttk.Entry(root_window, textvariable=file_entry_value, font=appfont, state='normal', width=34)
+file_entry = ttk.Entry(root_window, textvariable=file_entry_value, font=appfont, state='normal', width=42)
 file_entry.place(x=20, y=45)
 file_entry.icursor(len(file_entry_value.get()))
 file_entry.xview_moveto(1.0)
