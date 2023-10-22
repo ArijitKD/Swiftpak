@@ -1,6 +1,7 @@
 import tkinter as tk, tkinter.ttk as ttk, tkinter.font as font
 from tkinter.filedialog import askopenfilename
 import tkinter.messagebox as mbox
+import guifeatures as guif
 import os
 
 root_window = tk.Tk()
@@ -16,58 +17,13 @@ def run(event=None):
             os.system("gnome-terminal -- sh -c \"bash -c \\\"python3 \\\\\\\""+file_entry_value.get()+"\\\\\\\"; printf \\\\\\\"\\n\\n[Script execution complete. Press Enter to close this terminal window.]\\\\\\\"; read a\\\"\"")
     file_entry.selection_range(0,0)
 
-def cutoption(event=None):
-    try:
-        root_window.clipboard_clear()
-        selected = file_entry.selection_get()
-        selected_from_end = False
-        if (file_entry_value.get().endswith(selected)):
-            selected_from_end = True
-        print ("Selected", selected)
-        root_window.clipboard_append(selected)
-        file_entry_value.set(file_entry_value.get().replace(selected, ''))
-        if (not selected_from_end):
-            file_entry.icursor(file_entry.index('insert')-len(selected))
-        file_entry.selection_range(0,0)
-    except:
-        return
-
-def copyoption(event=None):
-    try:
-        root_window.clipboard_clear()
-        selected = file_entry.selection_get()
-        root_window.clipboard_append(selected)
-        file_entry.selection_range(0,0)
-    except:
-        return
-
-def pasteoption(event=None):
-    try:
-        selected = file_entry.selection_get()
-        root_window.clipboard_append(selected)
-        file_entry_value.set(file_entry_value.get().replace(selected, ''))
-        file_entry.icursor(file_entry.index('insert')-len(selected))
-    except:
-        selected = ''
-    clipboard_data = root_window.clipboard_get()
-    cursor_position = file_entry.index('insert')
-    print (clipboard_data)
-    root_window.clipboard_clear()
-    print ("Clipboard cleared")
-    #file_entry_value.set(file_entry_value.get().replace(selection, clipboard_data))
-    file_entry.insert(cursor_position, clipboard_data)
-    file_entry.selection_range(cursor_position, cursor_position+len(clipboard_data))
-    file_entry.xview_moveto(1.0)
-    
-def selectalloption(event=None):
-    file_entry.selection_range(0, 'end')
-    file_entry.icursor(len(file_entry_value.get()))
-    file_entry.xview_moveto(1.0)
-
 def browse(event=None):
     fev = file_entry_value.get()
     if (fev != ''):
-        initdir = fev[0:fev.rindex('/')+1]
+        if (fev.find('/') != -1):
+            initdir = fev[0:fev.rindex('/')+1]
+        else:
+            initdir = os.getcwd()
     else:
         initdir = os.getcwd()
     file_path = askopenfilename(initialdir=initdir, title="Select File", filetypes=(("Python scripts","*.py"), ("All Files", "*.*")))
@@ -150,10 +106,16 @@ browse_button.place(x=343, y=36)
 run_button = ttk.Button(root_window, text="Run script", style="my.TButton", command=run)
 
 
-applabel = ttk.Label(root_window, text="This app was created by Arijit Kumar Das (Github: @ArijitKD).\n By using this app, you agree to the terms of the MIT License.", font=appfont, background=WINDOW_BG_COLOR)
+applabel = ttk.Label(root_window, text="This app was created by Arijit Kumar Das (Github: @ArijitKD).\nBy using this app, you agree to the terms of the GPLv3 License.", font=appfont, background=WINDOW_BG_COLOR, justify='center')
 
 
-erc_options = {"Cut":cutoption, "Copy":copyoption, "Paste":pasteoption, "Select All":selectalloption}
+erc_options = {
+                "Cut": (lambda: guif.cut(root_window, file_entry, file_entry_value)),
+                "Copy": (lambda: guif.copy(root_window, file_entry, file_entry_value)),
+                "Paste": (lambda: guif.paste(root_window, file_entry, file_entry_value)),
+                "Select All":(lambda event: guif.selectall(file_entry, file_entry_value))
+              }
+
 erc = tk.Menu(file_entry, tearoff=0, font=font.Font(family='Arial', size=9))
 for option in erc_options.keys():
     if (option == "Select All"):
@@ -164,7 +126,5 @@ for option in erc_options.keys():
 applabel.pack(side='bottom', pady=30)
 run_button.pack(side="bottom", pady=50)
 root_window.bind("<Button-1>", entry_right_click_menu_focusout)
-root_window.bind("<Control-a>", selectalloption)
-#root_window.bind("<Control-c>", copyoption)
-#root_window.bind("<Control-x>", cutoption)
+root_window.bind("<Control-a>", erc_options["Select All"])
 root_window.mainloop()
