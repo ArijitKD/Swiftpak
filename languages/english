@@ -1,0 +1,47 @@
+########## Swiftpak English Language Pack ##########
+
+## Blank lines are mandatory after each key and value pair
+## [...] --> Key; "..." --> Value
+## DO NOT MODIFY UNLESS THERE ARE ERRORS!!!
+
+[FONT_SIZE]
+"10"
+
+[APP_NAME]
+"Swiftpak"
+
+[CHOOSE_FILE]
+"Choose File"
+
+[CUT]
+"Cut"
+
+[COPY]
+"Copy"
+
+[PASTE]
+"Paste"
+
+[SELECT_ALL]
+"Select All"
+
+[BROWSE_BUTTON]
+"Browse"
+
+[COMPRESS_BUTTON]
+"Compress"
+
+[APP_LABEL]
+"Swiftpak is developed by Team CyberTron as a small prototype for SIH 2023.\nIt\'s still in the pre-alpha stage and has limited functionality.\n\nBy using this app, you agree to the terms of the GPLv3 License."
+
+[BROWSE_DIALOG_BOX_TITLE]
+"Select File"
+
+[BROWSE_DIALOG_BOX_FILETYPE_PNG]
+"PNG File"
+
+[BROWSE_DIALOG_BOX_FILETYPE_JPEG]
+"JPEG File"
+
+[BROWSE_DIALOG_BOX_FILETYPE_ALL]
+"All Files"

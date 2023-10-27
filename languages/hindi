@@ -1,0 +1,47 @@
+########## Swiftpak Hindi Language Pack ##########
+
+## Blank lines are mandatory after each key and value pair
+## [...] --> Key; "..." --> Value
+## DO NOT MODIFY UNLESS THERE ARE ERRORS!!!
+
+[FONT_SIZE]
+"11"
+
+[APP_NAME]
+"स्विफ्टपैक"
+
+[CHOOSE_FILE]
+"फाइलें चुनें"
+
+[CUT]
+"कट करें"
+
+[COPY]
+"कॉपी करें"
+
+[PASTE]
+"पेस्ट करें"
+
+[SELECT_ALL]
+"सबका चयन करें"
+
+[BROWSE_BUTTON]
+"ब्राउज़ करें"
+
+[COMPRESS_BUTTON]
+"संकुचित करें"
+
+[APP_LABEL]
+"स्विफ्टपैक को टीम साइबरट्रॉन द्वारा SIH 2023 के लिए एक छोटे प्रोटोटाइप के रूप में\nविकसित किया गया है। यह अभी भी प्री-अल्फा चरण में है और इसकी सीमित कार्यक्षमता है।\n\nइस ऐप का उपयोग करके, आप GPLv3 लाइसेंस की शर्तों से सहमत हैं।"
+
+[BROWSE_DIALOG_BOX_TITLE]
+"फ़ाइल का चयन करें"
+
+[BROWSE_DIALOG_BOX_FILETYPE_PNG]
+"पीएनजी फ़ाइल"
+
+[BROWSE_DIALOG_BOX_FILETYPE_JPEG]
+"जेपीईजी फ़ाइल"
+
+[BROWSE_DIALOG_BOX_FILETYPE_ALL]
+"सभी फाइलें"
