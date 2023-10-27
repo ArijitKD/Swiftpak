@@ -1,8 +1,6 @@
-import tkinter as tk, tkinter.ttk as ttk, tkinter.font as font
-from tkinter.filedialog import askopenfilename
-import tkinter.messagebox as mbox
+import tkinter as tk, tkinter.ttk as ttk, tkinter.font as font, tkinter.messagebox as mbox, os
+
 import guifeatures as guif
-import os
 
 root_window = tk.Tk()
 file_entry_value = tk.StringVar()
@@ -17,22 +15,6 @@ def run(event=None):
             os.system("gnome-terminal -- sh -c \"bash -c \\\"python3 \\\\\\\""+file_entry_value.get()+"\\\\\\\"; printf \\\\\\\"\\n\\n[Script execution complete. Press Enter to close this terminal window.]\\\\\\\"; read a\\\"\"")
     file_entry.selection_range(0,0)
 
-def browse(event=None):
-    fev = file_entry_value.get()
-    if (fev != ''):
-        if (fev.find('/') != -1):
-            initdir = fev[0:fev.rindex('/')+1]
-        else:
-            initdir = os.getcwd()
-    else:
-        initdir = os.getcwd()
-    file_path = askopenfilename(initialdir=initdir, title="Select File", filetypes=(("Python scripts","*.py"), ("All Files", "*.*")))
-    if (file_path not in ['', tuple()]):
-        file_entry_value.set(file_path)
-    file_entry.selection_range(0, 'end')
-    file_entry.icursor(len(file_entry_value.get()))
-    file_entry.xview_moveto(1.0)
-    file_entry.focus_set()
 
 def close_root_window(event=None):
     filepath = file_entry_value.get()
@@ -100,7 +82,7 @@ file_entry.focus_set()
 
 style = ttk.Style()
 style.configure('my.TButton', font=appfont)
-browse_button = ttk.Button(root_window, text="Browse...", style="my.TButton", command=browse)
+browse_button = ttk.Button(root_window, text="Browse...", style="my.TButton", command=lambda: guif.browseforfile(root_window, file_entry, file_entry_value))
 browse_button.place(x=343, y=36)
 
 run_button = ttk.Button(root_window, text="Run script", style="my.TButton", command=run)
