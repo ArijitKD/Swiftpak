@@ -5,7 +5,7 @@ import guifeatures as guif
 
 
 if (__name__ == "__main__"):    #Define private functions that will be accessible from here only
-    def _run():
+    def _compress():
         if (file_entry_value.get() == ''):
             mbox.showinfo(title="No file chosen", message="Please type the location of the file in the entry box or click Browse to choose a file.")
         else:
@@ -77,6 +77,9 @@ if (__name__ == "__main__"):    #Define private functions that will be accessibl
                         lang_data[tmp_lang_data[i][1:-1].lower()] = tmp_lang_data[i][1:-1]
         #print ("Load language data -->", lang_data)
         return lang_data
+    
+    def _options():
+        pass
 
 
 ## CONSTANTS
@@ -159,10 +162,9 @@ root_window.protocol("WM_DELETE_WINDOW", _close_root_window)
 
 # Creating the "Choose file:" label with appropriate attributes
 choose_file_label = ttk.Label(root_window, text = lang_data['choose_file']+':', font=appfont, background=WINDOW_BG_COLOR)
-choose_file_label.place(x=20, y=20)
+
 
 file_entry = ttk.Entry(root_window, textvariable=file_entry_value, font=appfont, state='normal', width=42)
-file_entry.place(x=20, y=45)
 file_entry.icursor(len(file_entry_value.get()))
 file_entry.xview_moveto(1.0)
 file_entry.selection_range(0, 'end')
@@ -171,9 +173,14 @@ file_entry.focus_set()
 
 style = ttk.Style()
 style.configure('my.TButton', font=appfont)
-browse_button = ttk.Button(root_window, text=lang_data["browse_button"]+"...", style="my.TButton", command=lambda: guif.browseforfile(root_window, file_entry, file_entry_value, title=lang_data["browse_dialog_box_title"], filetypes=ALLOWED_FILE_TYPES))
 
-run_button = ttk.Button(root_window, text=lang_data["compress_button"], style="my.TButton", command=_run)
+run_browse_btn_frame = tk.Frame(root_window, background=WINDOW_BG_COLOR)
+
+browse_button = ttk.Button(run_browse_btn_frame, text=lang_data["browse_button"]+"...", style="my.TButton", command=lambda: guif.browseforfile(root_window, file_entry, file_entry_value, title=lang_data["browse_dialog_box_title"], filetypes=ALLOWED_FILE_TYPES))
+
+compress_button = ttk.Button(root_window, text=lang_data["compress_button"], style="my.TButton", command=_compress)
+
+options_button = ttk.Button(run_browse_btn_frame, text=lang_data["options_button"], style="my.TButton", command=_options)
 
 
 app_label = ttk.Label(root_window, text=lang_data["app_label"], font=appfont, background=WINDOW_BG_COLOR, justify='center')
@@ -191,13 +198,18 @@ for option in erc_options.keys():
     if (option == "Select All"):
         erc.add_separator()
     erc.add_command(label=option, command=erc_options[option])
+    
+# Pack all the widgets to the root window
+choose_file_label.pack(anchor='nw', padx=(15,0), pady=(20,0))
+file_entry.pack(anchor='w', padx=(15,15), pady=(10,0), fill='x')
+run_browse_btn_frame.pack(fill='x')
+browse_button.pack(side='right', padx=(0,15), pady=(10,0), fill=None)
+options_button.pack(side='left', padx=(15,0), pady=(10,0))
+app_label.pack(side='bottom', pady=(0,20))
+compress_button.pack(side='bottom', pady=(0,30))
 
-if (SYSTEM == "Windows"):
-    browse_button.place(x=343, y=44)
-else:
-    browse_button.place(x=343, y=36)
-app_label.pack(side='bottom', pady=25)
-run_button.pack(side="bottom", pady=50)
 root_window.bind("<Button-1>", lambda event: _entry_right_click_menu_focusout())
 root_window.bind("<Control-a>", erc_options[lang_data["select_all"]])
+
+config_data["app_language"] = "english"
 root_window.mainloop()
