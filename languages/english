@@ -28,6 +28,9 @@
 [BROWSE_BUTTON]
 "Browse"
 
+[OPTIONS_BUTTON]
+"Options"
+
 [COMPRESS_BUTTON]
 "Compress"
 
