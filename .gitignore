@@ -1,3 +1,5 @@
-pic.png
-Update Project.sh
+*.png
+*.jpeg
+*.jpg
+*.sh
 __pycache__/*
