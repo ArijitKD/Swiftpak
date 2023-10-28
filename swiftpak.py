@@ -1,7 +1,9 @@
-import tkinter as tk, tkinter.ttk as ttk, tkinter.font as font, tkinter.messagebox as mbox, os
+# -*- coding: utf8 -*-
+
+import tkinter as tk, tkinter.ttk as ttk, tkinter.font as font, tkinter.messagebox as mbox, os, codecs, time
 from platform import system
 
-import guifeatures as guif
+import guifeatures as guif, image_compress as imgc
 
 
 if (__name__ == "__main__"):    #Define private functions that will be accessible from here only
@@ -12,8 +14,52 @@ if (__name__ == "__main__"):    #Define private functions that will be accessibl
             if (not os.path.isfile(file_entry_value.get())):
                 mbox.showerror(title="Invalid file path", message="Chosen file does not exist. Please make sure that the file path in the entry box is correct.")
             else:
-                os.system("gnome-terminal -- sh -c \"bash -c \\\"python3 \\\\\\\""+file_entry_value.get()+"\\\\\\\"; printf \\\\\\\"\\n\\n[Script execution complete. Press Enter to close this terminal window.]\\\\\\\"; read a\\\"\"")
-        file_entry.selection_range(0,0)
+                selected_file = file_entry_value.get()
+                selected_file_size = os.path.getsize(selected_file)
+                #os.system("gnome-terminal -- sh -c \"bash -c \\\"python3 \\\\\\\""+file_entry_value.get()+"\\\\\\\"; printf \\\\\\\"\\n\\n[Script execution complete. Press Enter to close this terminal window.]\\\\\\\"; read a\\\"\"")
+                compress_window = tk.Toplevel(master=root_window)
+                compress_window.title(lang_data["compress_dialog_box_title"])
+                compress_window.attributes("-topmost", True)
+                #compress_window.attributes("-toolwindow", True)
+                compress_window.geometry("300x200")
+                compress_window.resizable(0,0)
+                ttk.Label(compress_window, text="Select Compression level:", font=appfont).pack(anchor='nw', padx=(10,0), pady=(10,0))
+                compress_window_slider_intvar = tk.IntVar()
+
+                def slider_changed():
+                    to_be_compressed_file.configure(text="Estimated new file size: %s bytes"%(int(selected_file_size-(compress_window_slider_intvar.get()/100*selected_file_size))))
+
+                def ok_button_pressed():
+                    compressed_file = selected_file.lower().replace(".png", "")+str(time.time())+".jpeg"
+                    imgc.compress_png_to_jpeg(source_png_image=selected_file, compressed_jpeg_image=compressed_file, jpeg_quality=100-compress_window_slider_intvar.get())
+                    compress_window.destroy()
+                    mbox.showinfo(title="Information", message="File compressed successfully: "+compressed_file)
+
+                def cancel_button_pressed():
+                   compress_window.destroy()
+
+                slider = ttk.Scale(compress_window, from_=0, to=100, orient='horizontal', variable=compress_window_slider_intvar, command=lambda event: slider_changed())
+                slider.pack(anchor='nw', fill='x', padx=(10,10), pady=(10,0))
+
+                current_file = ttk.Label(compress_window, text="Selected file size: %s bytes"%(selected_file_size,), font=appfont)
+                current_file.pack(anchor='nw', padx=(10,0), pady=(10,0))
+
+                to_be_compressed_file = ttk.Label(compress_window, text="Estimated new file size: %s bytes"%(int(selected_file_size-(compress_window_slider_intvar.get()/100*selected_file_size))), font=appfont)
+                to_be_compressed_file.pack(anchor='nw', padx=(10,0), pady=(0,0))
+
+                buttons_frame = tk.Frame(compress_window)
+                ok_button = ttk.Button(buttons_frame, text="OK", command=ok_button_pressed)
+                cancel_button = ttk.Button(buttons_frame, text="Cancel", command=cancel_button_pressed)
+
+                buttons_frame.pack(fill='x')
+                ok_button.pack(side='left', padx=(15,0), pady=(30,0))
+                cancel_button.pack(side='right', padx=(0,15), pady=(30,0))
+
+
+
+                
+                compress_window.mainloop()
+        #file_entry.selection_range(0,0)
 
 
     def _close_root_window():
@@ -60,7 +106,7 @@ if (__name__ == "__main__"):    #Define private functions that will be accessibl
     
     def _load_language_pack(language="english"):
         separator = "\\" if SYSTEM == "Windows" else "/"
-        with open(LANGUAGES_DIR+separator+language, encoding="utf-8") as langfile:
+        with codecs.open(LANGUAGES_DIR+separator+language, encoding="utf-8") as langfile:
             tmp_lang_data = langfile.readlines()
             for line in tmp_lang_data:
                 if (line.startswith("#") or line.startswith("//")):
@@ -211,5 +257,4 @@ compress_button.pack(side='bottom', pady=(0,30))
 root_window.bind("<Button-1>", lambda event: _entry_right_click_menu_focusout())
 root_window.bind("<Control-a>", erc_options[lang_data["select_all"]])
 
-config_data["app_language"] = "english"
 root_window.mainloop()
