@@ -6,132 +6,130 @@ from platform import system
 import guifeatures as guif, image_compress as imgc
 
 
-if (__name__ == "__main__"):    #Define private functions that will be accessible from here only
-    def _compress():
-        if (file_entry_value.get() == ''):
-            mbox.showinfo(title="No file chosen", message="Please type the location of the file in the entry box or click Browse to choose a file.")
+def _compress():
+    if (file_entry_value.get() == ''):
+        mbox.showinfo(title="No file chosen", message="Please type the location of the file in the entry box or click Browse to choose a file.")
+    else:
+        if (not os.path.isfile(file_entry_value.get())):
+             mbox.showerror(title="Invalid file path", message="Chosen file does not exist. Please make sure that the file path in the entry box is correct.")
         else:
-            if (not os.path.isfile(file_entry_value.get())):
-                mbox.showerror(title="Invalid file path", message="Chosen file does not exist. Please make sure that the file path in the entry box is correct.")
-            else:
-                selected_file = file_entry_value.get()
-                selected_file_size = os.path.getsize(selected_file)
-                #os.system("gnome-terminal -- sh -c \"bash -c \\\"python3 \\\\\\\""+file_entry_value.get()+"\\\\\\\"; printf \\\\\\\"\\n\\n[Script execution complete. Press Enter to close this terminal window.]\\\\\\\"; read a\\\"\"")
-                compress_window = tk.Toplevel(master=root_window)
-                compress_window.title(lang_data["compress_dialog_box_title"])
-                compress_window.attributes("-topmost", True)
-                #compress_window.attributes("-toolwindow", True)
-                compress_window.geometry("300x200")
-                compress_window.resizable(0,0)
-                ttk.Label(compress_window, text="Select Compression level:", font=appfont).pack(anchor='nw', padx=(10,0), pady=(10,0))
-                compress_window_slider_intvar = tk.IntVar()
+            selected_file = file_entry_value.get()
+            selected_file_size = os.path.getsize(selected_file)
+            #os.system("gnome-terminal -- sh -c \"bash -c \\\"python3 \\\\\\\""+file_entry_value.get()+"\\\\\\\"; printf \\\\\\\"\\n\\n[Script execution complete. Press Enter to close this terminal window.]\\\\\\\"; read a\\\"\"")
+            compress_window = tk.Toplevel(master=root_window)
+            compress_window.title(lang_data["compress_dialog_box_title"])
+            compress_window.attributes("-topmost", True)
+            if (os.path.isfile("assets"+PATH_SLASH+"swiftpak-icon.png")):
+                icon_ob = tk.PhotoImage(file = "assets"+PATH_SLASH+"swiftpak-icon.png")
+                compress_window.iconphoto(False, icon_ob)
+            compress_window.geometry("300x200")
+            compress_window.resizable(0,0)
+            ttk.Label(compress_window, text="Select Compression level:", font=appfont).pack(anchor='nw', padx=(10,0), pady=(10,0))
+            compress_window_slider_intvar = tk.IntVar()
 
-                def slider_changed():
-                    to_be_compressed_file.configure(text="Estimated new file size: %s bytes"%(int(selected_file_size-(compress_window_slider_intvar.get()/100*selected_file_size))))
+            def slider_changed():
+                to_be_compressed_file.configure(text="Estimated new file size: %s bytes"%(int(selected_file_size-(compress_window_slider_intvar.get()/100*selected_file_size))))
 
-                def ok_button_pressed():
-                    compressed_file = selected_file.lower().replace(".png", "")+str(time.time())+".jpeg"
-                    imgc.compress_png_to_jpeg(source_png_image=selected_file, compressed_jpeg_image=compressed_file, jpeg_quality=100-compress_window_slider_intvar.get())
-                    compress_window.destroy()
-                    mbox.showinfo(title="Information", message="File compressed successfully: "+compressed_file)
+            def ok_button_pressed():
+                compressed_file = selected_file.lower().replace(".png", "")+str(time.time())+".jpeg"
+                imgc.compress_png_to_jpeg(source_png_image=selected_file, compressed_jpeg_image=compressed_file, jpeg_quality=100-compress_window_slider_intvar.get())
+                compress_window.destroy()
+                mbox.showinfo(title="Information", message="File compressed successfully: "+compressed_file)
 
-                def cancel_button_pressed():
-                   compress_window.destroy()
+            def cancel_button_pressed():
+                compress_window.destroy()
 
-                slider = ttk.Scale(compress_window, from_=0, to=100, orient='horizontal', variable=compress_window_slider_intvar, command=lambda event: slider_changed())
-                slider.pack(anchor='nw', fill='x', padx=(10,10), pady=(10,0))
+            slider = ttk.Scale(compress_window, from_=0, to=100, orient='horizontal', variable=compress_window_slider_intvar, command=lambda event: slider_changed())
+            slider.pack(anchor='nw', fill='x', padx=(10,10), pady=(10,0))
 
-                current_file = ttk.Label(compress_window, text="Selected file size: %s bytes"%(selected_file_size,), font=appfont)
-                current_file.pack(anchor='nw', padx=(10,0), pady=(10,0))
+            current_file = ttk.Label(compress_window, text="Selected file size: %s bytes"%(selected_file_size,), font=appfont)
+            current_file.pack(anchor='nw', padx=(10,0), pady=(10,0))
 
-                to_be_compressed_file = ttk.Label(compress_window, text="Estimated new file size: %s bytes"%(int(selected_file_size-(compress_window_slider_intvar.get()/100*selected_file_size))), font=appfont)
-                to_be_compressed_file.pack(anchor='nw', padx=(10,0), pady=(0,0))
+            to_be_compressed_file = ttk.Label(compress_window, text="Estimated new file size: %s bytes"%(int(selected_file_size-(compress_window_slider_intvar.get()/100*selected_file_size))), font=appfont)
+            to_be_compressed_file.pack(anchor='nw', padx=(10,0), pady=(0,0))
 
-                buttons_frame = tk.Frame(compress_window)
-                ok_button = ttk.Button(buttons_frame, text="OK", command=ok_button_pressed)
-                cancel_button = ttk.Button(buttons_frame, text="Cancel", command=cancel_button_pressed)
+            buttons_frame = tk.Frame(compress_window)
+            ok_button = ttk.Button(buttons_frame, text="OK", command=ok_button_pressed)
+            cancel_button = ttk.Button(buttons_frame, text="Cancel", command=cancel_button_pressed)
 
-                buttons_frame.pack(fill='x')
-                ok_button.pack(side='left', padx=(15,0), pady=(30,0))
-                cancel_button.pack(side='right', padx=(0,15), pady=(30,0))
-
-
-
-                
-                compress_window.mainloop()
-        #file_entry.selection_range(0,0)
+            buttons_frame.pack(fill='x')
+            ok_button.pack(side='left', padx=(15,0), pady=(30,0))
+            cancel_button.pack(side='right', padx=(0,15), pady=(30,0))
+  
+            compress_window.mainloop()
 
 
-    def _close_root_window():
-        filepath = file_entry_value.get()
-        print (filepath)
-        config_data["last_opened_file"] = filepath
-        _save_config(config_data, config_file)
-        root_window.destroy()
+def _close_root_window():
+    filepath = file_entry_value.get()
+    print (filepath)
+    config_data["last_opened_file"] = filepath
+    _save_config(config_data, config_file)
+    root_window.destroy()
 
-    def _entry_right_click(event):
-        try:
-            erc.tk_popup(event.x_root, event.y_root, 0)        
-        finally:
-            erc.grab_release()
+def _entry_right_click(event):
+    try:
+        erc.tk_popup(event.x_root, event.y_root, 0)        
+    finally:
+        erc.grab_release()
 
-    def _entry_right_click_menu_focusout():
-        erc.unpost()
+def _entry_right_click_menu_focusout():
+    erc.unpost()
 
-    def _save_config(config_data, config_file):
-        print ("Save config data -->", config_data)
-        with open(config_file, 'w') as configurations:
-            keys = tuple(config_data.keys())
-            values = tuple(config_data.values())
-            for i in range(len(config_data)):
-                configurations.write("[%s]\n"%(keys[i].upper(),))
-                configurations.write("%s\n\n"%(values[i],))
+def _save_config(config_data, config_file):
+    print ("Save config data -->", config_data)
+    with open(config_file, 'w') as configurations:
+        keys = tuple(config_data.keys())
+        values = tuple(config_data.values())
+        for i in range(len(config_data)):
+            configurations.write("[%s]\n"%(keys[i].upper(),))
+            configurations.write("%s\n\n"%(values[i],))
 
-    def _load_config(config_file):
-        with open(config_file) as configurations:
-            tmp_config_data = configurations.readlines()
-            for line in tmp_config_data:
-                if (line.startswith("#") or line.startswith("//")):
-                    tmp_config_data.pop(tmp_config_data.index(line))
-            config_data = dict()
-            for i in range(len(tmp_config_data)):
-                tmp_config_data[i] = tmp_config_data[i].strip()
-                if (tmp_config_data[i].startswith('[') and tmp_config_data[i].endswith(']')):
-                    try:
-                        config_data[tmp_config_data[i][1:-1].lower()] = tmp_config_data[i+1].rstrip('\n')
-                    except IndexError:
-                        config_data[tmp_config_data[i][1:-1].lower()] = ""
-        print ("Load config data -->", config_data)
-        return config_data
+def _load_config(config_file):
+    with open(config_file) as configurations:
+        tmp_config_data = configurations.readlines()
+        for line in tmp_config_data:
+            if (line.startswith("#") or line.startswith("//")):
+                tmp_config_data.pop(tmp_config_data.index(line))
+        config_data = dict()
+        for i in range(len(tmp_config_data)):
+            tmp_config_data[i] = tmp_config_data[i].strip()
+            if (tmp_config_data[i].startswith('[') and tmp_config_data[i].endswith(']')):
+                try:
+                    config_data[tmp_config_data[i][1:-1].lower()] = tmp_config_data[i+1].rstrip('\n')
+                except IndexError:
+                    config_data[tmp_config_data[i][1:-1].lower()] = ""
+    print ("Load config data -->", config_data)
+    return config_data
     
-    def _load_language_pack(language="english"):
-        separator = "\\" if SYSTEM == "Windows" else "/"
-        with codecs.open(LANGUAGES_DIR+separator+language, encoding="utf-8") as langfile:
-            tmp_lang_data = langfile.readlines()
-            for line in tmp_lang_data:
-                if (line.startswith("#") or line.startswith("//")):
-                    tmp_lang_data.pop(tmp_lang_data.index(line))
-            lang_data = dict()
-            for i in range(len(tmp_lang_data)):
-                tmp_lang_data[i] = tmp_lang_data[i].strip()
-                if (tmp_lang_data[i].startswith('[') and tmp_lang_data[i].endswith(']')):
-                    try:
-                        tmp_lang_data[i+1] = tmp_lang_data[i+1].rstrip('\n')
-                        tmp_lang_data[i+1] = tmp_lang_data[i+1].replace("\\n", "\n").replace("\\\'", "\'").replace("\\\"", "\"").replace("\\t", "\t").replace("\\\\", '\\')
-                        lang_data[tmp_lang_data[i][1:-1].lower()] = tmp_lang_data[i+1][1:-1] if tmp_lang_data[i+1] != "" else tmp_lang_data[i][1:-1]
-                    except IndexError:
-                        lang_data[tmp_lang_data[i][1:-1].lower()] = tmp_lang_data[i][1:-1]
-        #print ("Load language data -->", lang_data)
-        return lang_data
+def _load_language_pack(language="english"):
+    separator = "\\" if SYSTEM == "Windows" else "/"
+    with codecs.open(LANGUAGES_DIR+separator+language, encoding="utf-8") as langfile:
+        tmp_lang_data = langfile.readlines()
+        for line in tmp_lang_data:
+            if (line.startswith("#") or line.startswith("//")):
+                tmp_lang_data.pop(tmp_lang_data.index(line))
+        lang_data = dict()
+        for i in range(len(tmp_lang_data)):
+            tmp_lang_data[i] = tmp_lang_data[i].strip()
+            if (tmp_lang_data[i].startswith('[') and tmp_lang_data[i].endswith(']')):
+                try:
+                    tmp_lang_data[i+1] = tmp_lang_data[i+1].rstrip('\n')
+                    tmp_lang_data[i+1] = tmp_lang_data[i+1].replace("\\n", "\n").replace("\\\'", "\'").replace("\\\"", "\"").replace("\\t", "\t").replace("\\\\", '\\')
+                    lang_data[tmp_lang_data[i][1:-1].lower()] = tmp_lang_data[i+1][1:-1] if tmp_lang_data[i+1] != "" else tmp_lang_data[i][1:-1]
+                except IndexError:
+                    lang_data[tmp_lang_data[i][1:-1].lower()] = tmp_lang_data[i][1:-1]
+    #print ("Load language data -->", lang_data)
+    return lang_data
     
-    def _options():
-        pass
+def _options():
+    pass
 
 
 ## CONSTANTS
 LANGUAGES_DIR = "languages"
 WINDOW_BG_COLOR = '#f6f5f4'
 SYSTEM = system()
+PATH_SLASH = "\\" if SYSTEM == "Windows" else "/"
 DEFAULT_CONFIG_DATA = {
                             "last_opened_file" : "",
                             "app_language"     : "english"
@@ -163,6 +161,10 @@ config_data = _load_config(config_file)
 # Creating the root window
 root_window = tk.Tk()
 file_entry_value = tk.StringVar()
+
+if (os.path.isfile("assets"+PATH_SLASH+"swiftpak-icon.png")):
+            icon_ob = tk.PhotoImage(file = "assets"+PATH_SLASH+"swiftpak-icon.png")
+            root_window.iconphoto(False, icon_ob)
 
 # Setting the loaded configurations
 lang_data = _load_language_pack(config_data["app_language"])    # Set app language
