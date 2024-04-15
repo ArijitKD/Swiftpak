@@ -1,6 +1,5 @@
 *.png
 *.jpeg
 *.jpg
-*.sh
 __pycache__/*
 build/*
